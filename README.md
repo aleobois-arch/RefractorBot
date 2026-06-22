@@ -65,3 +65,111 @@ graph TD
     H -.->|API Call| Q
 
     I -->|JSON Response| A
+
+## 🛠️ Tech Stack
+
+* **AI Brain:** Alibaba Cloud DashScope API (Qwen Large Language Models)
+* **Orchestration:** Node.js / Express built with TypeScript
+* **Infrastructure:** Alibaba Cloud Function Compute (Custom Runtime, Serverless)
+* **Frontend:** HTML/CSS/JS Glassmorphism UI rendering real-time JSON timeline logs to visualize agent negotiations.
+
+---
+
+## 🚀 Setup & Local Deployment
+
+### Prerequisites
+
+* Node.js (v18+)
+* An Alibaba Cloud Account & DashScope API Key
+* TypeScript
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/yourusername/refactorbot-society.git](https://github.com/yourusername/refactorbot-society.git)
+    cd refactorbot-society
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Create a `.env` file in the root directory:**
+    ```env
+    QWEN_API_KEY=your_dashscope_api_key_here
+    PORT=9000
+    ```
+
+4.  **Build the TypeScript files:**
+    ```bash
+    npm run build
+    ```
+
+5.  **Start the local server:**
+    ```bash
+    npm start
+    ```
+
+---
+
+## ☁️ Alibaba Cloud Deployment Guide
+
+This project is configured specifically for **Alibaba Cloud Function Compute (Custom Runtime)**.
+
+1.  Run `npm run build` to generate the updated `dist` folder.
+2.  Select the following 4 items in your file explorer:
+    * `dist/` (folder)
+    * `node_modules/` (folder)
+    * `package.json`
+    * `.env`
+3.  Compress these 4 items directly into a `.zip` file (Do not zip the parent folder, zip the items themselves).
+4.  Upload the `deploy.zip` file to your Alibaba Cloud Function Compute instance.
+5.  Ensure the Function Start Command is set to: `node dist/server.js`
+
+---
+
+## ⚙️ Advanced Configuration: Tuning the Agent Society
+
+By default, the RefactorBot Society is configured to allow a maximum of 3 negotiation cycles between the Developer and the QA Engineer. If the QA Engineer is not satisfied by the third attempt, the loop terminates to prevent infinite API calls and runaway cloud costs.
+
+You can easily tune this limit to give the Developer agent more chances to fix highly complex legacy code.
+
+### 1. Adjusting the Cycle Limit
+Open `src/orchestrator.ts` and locate the `MAX_ATTEMPTS` constant in the `runRefactorBot` function:
+
+```typescript
+// src/orchestrator.ts
+let approved = false;
+let attempts = 0;
+const MAX_ATTEMPTS = 3; // Increase this number to allow more negotiation cycles
+
+while (!approved && attempts < MAX_ATTEMPTS) {
+    // ... agent loop ...
+}
+
+### 2. Synchronizing Cloud Timeouts
+If you increase the `MAX_ATTEMPTS`, you must also increase your Alibaba Cloud Function Compute execution timeout. An extended AI debate will trigger a serverless timeout if not properly configured.
+
+**Rule of Thumb:** Allow approximately 90–100 seconds per cycle.
+
+* **3 Cycles (Default):** Set Alibaba Cloud Timeout to **300 seconds** (5 minutes).
+* **5 Cycles:** Set Alibaba Cloud Timeout to **600 seconds** (10 minutes).
+
+**To update the timeout in Alibaba Cloud:**
+1. Navigate to your Function Compute console.
+2. Select your function and click **Configurations**.
+3. Under Basic Settings, change the **Execution Timeout Period**.
+4. Save and deploy the new configuration.
+
+---
+
+## 👨‍💻 Author
+**Jeremy Codjoe** — Technology Operations Analyst & Creator of JemBuildz  
+*Track 3 Submission for the Agent Society Hackathon.*
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
