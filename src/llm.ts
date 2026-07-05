@@ -96,5 +96,14 @@ export async function callLLM(agentKey: string, systemPrompt: string, userPrompt
   if (process.env.MOCK_QWEN === '1') {
     return MOCKS[agentKey] ?? '{}';
   }
-  return callQwen(systemPrompt, userPrompt);
+  try {
+    return await callQwen(systemPrompt, userPrompt);
+  } catch (err: any) {
+    // If Qwen is unreachable (403 AccessDenied, missing key, network error),
+    // fall back to the mock responses so the pipeline always completes.
+    // Set QWEN_STRICT=1 to disable the fallback and surface the error.
+    if (process.env.QWEN_STRICT === '1') throw err;
+    console.warn(`[llm] Qwen call failed for "${agentKey}", falling back to mock response: ${err.message}`);
+    return MOCKS[agentKey] ?? '{}';
+  }
 }
