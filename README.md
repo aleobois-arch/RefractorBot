@@ -2,29 +2,32 @@
 
 ![Hackathon](https://img.shields.io/badge/Track_3-Agent_Society-blue?style=for-the-badge)
 ![Cloud](https://img.shields.io/badge/Hosted_on-Alibaba_Cloud-FF6600?style=for-the-badge&logo=alibabacloud&logoColor=white)
-![AI](https://img.shields.io/badge/Powered_by-Qwen_Turbo-8B5CF6?style=for-the-badge)
+![AI](https://img.shields.io/badge/Powered_by-Qwen_Plus-8B5CF6?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-# 🧰 Built With
+**RefactorBot Society** is an autonomous, serverless multi-agent pipeline hosted on Alibaba Cloud Function Compute. Designed to modernize and secure legacy code, it triggers a "society" of specialized AI personas powered by Qwen Large Language Models to architect, write, and aggressively QA code before returning it — along with the full negotiation timeline and the QA verdict.
 
-* **Alibaba Cloud Function Compute** (Serverless, Custom Runtime Infrastructure)
-* **Alibaba Cloud DashScope API** (Qwen Large Language Models Engine)
-* **TypeScript & Node.js** (Core Backend Orchestration Router)
-* **Express.js** (Endpoint Routing & Serving Frontend Pipelines)
-* **HTML5 / CSS3 / JavaScript** (Glassmorphism Live-Timeline Client Dashboard)
-* **Mermaid.js** (Dynamic Graphical Architecture Mapping)
-
-**RefactorBot Society** is an autonomous, serverless multi-agent pipeline hosted on Alibaba Cloud Function Compute. Designed to modernize and secure legacy code, it triggers a "society" of specialized AI personas powered by Qwen Large Language Models to architect, write, and aggressively QA code before it ever reaches production.
+The project also ships a second agent society: a **NIS2 incident-response pipeline** (see [NIS2 Incident Response](#%EF%B8%8F-nis2-incident-response-module) below).
 
 Built by JemBuildz.
+
+## 🧰 Built With
+
+* **Alibaba Cloud Function Compute** — serverless custom-runtime infrastructure
+* **Alibaba Cloud DashScope API** — Qwen Large Language Models engine
+* **TypeScript & Node.js** — core backend orchestration
+* **Express.js** — endpoint routing and dashboard serving
+* **HTML5 / CSS3 / JavaScript** — glassmorphism timeline dashboards
 
 ---
 
 ## 💡 Inspiration
+
 Legacy code modernization is usually a painful, manual process. While single-prompt LLMs can translate code from one language to another, they frequently hallucinate, introduce security vulnerabilities (like SSRF or CORS misconfigurations), and fail to grasp enterprise architecture. We wanted to build a system that doesn't just translate code, but *engineers* it.
 
 ## ⚙️ How The Society Works
-When fed legacy monolithic code via the interactive Glassmorphism UI, it triggers a rigorous negotiation loop between five distinct personas:
+
+When fed legacy monolithic code via the interactive dashboard, it triggers a rigorous negotiation loop between five distinct personas:
 
 1. **The Parser:** Dissects the legacy logic and identifies deprecated patterns.
 2. **The Architect:** Designs a modern, asynchronous target framework (e.g., FastAPI).
@@ -32,7 +35,7 @@ When fed legacy monolithic code via the interactive Glassmorphism UI, it trigger
 4. **The QA Engineer:** A ruthless security and performance reviewer. It actively hunts for resource leaks, unhandled exceptions, and architectural flaws, rejecting the code until it meets enterprise standards.
 5. **The Senior Reviewer:** Mediates any QA rejections and provides actionable fix instructions back to the Developer.
 
-Code is only output to the user once it survives this loop and passes the QA Engineer's strict approval.
+The Developer/QA loop runs for up to 3 negotiation cycles. The final draft is always returned along with the complete agent timeline and an explicit `approved` flag in the API response, so the caller knows whether the code passed the QA Engineer's review or hit the cycle limit.
 
 ---
 
@@ -40,7 +43,6 @@ Code is only output to the user once it survives this loop and passes the QA Eng
 
 ```mermaid
 graph TD
-    A --> B
     %% Styling
     classDef user fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff;
     classDef cloud fill:#f97316,stroke:#c2410c,stroke-width:2px,color:#fff;
@@ -49,20 +51,20 @@ graph TD
 
     %% Nodes
     A[User Frontend UI]:::user -->|POST /refactor| B(Alibaba Function Compute)
-    
+
     subgraph Serverless Backend [Alibaba Cloud Custom Runtime]
         B:::cloud --> C{Orchestrator Loop}
-        
+
         C --> D[Parser Agent]:::agent
         C --> E[Architect Agent]:::agent
-        
+
         %% Negotiation Loop
         subgraph Agent Negotiation Loop
             F[Developer Agent]:::agent --> G{QA Engineer}:::agent
             G -- Rejects Code --> H[Senior Reviewer]:::agent
             H -- Fix Instructions --> F
         end
-        
+
         E --> F
         G -- Approves Code --> I[Final Code Output]
     end
@@ -76,74 +78,95 @@ graph TD
 
     I -->|JSON Response| A
 ```
-## 🛠️ Tech Stack
-AI Brain: Alibaba Cloud DashScope API (Qwen Large Language Models)
 
-Orchestration: Node.js / Express built with TypeScript
+---
 
-Infrastructure: Alibaba Cloud Function Compute (Custom Runtime, Serverless)
+## 🛡️ NIS2 Incident Response Module
 
-Frontend: HTML/CSS/JS Glassmorphism UI rendering real-time JSON timeline logs to visualize agent negotiations.
+A second five-agent society handles security-incident response with EU NIS2 (Directive 2022/2555, Article 23) reporting:
+
+1. **The Watcher** — triage & severity classification, NIS2 significance assessment
+2. **The Tracker** — strictly read-only forensic investigation (timeline, assets, IoCs)
+3. **The Diagnostician** — root-cause analysis with confidence level
+4. **The Engineer** — containment actions, remediation plan, residual risk
+5. **The Scribe** — formal NIS2 incident report (24h early warning / 72h notification / 1-month final report obligations)
+
+Endpoints: dashboard at `GET /nis2`, API at `POST /incident` with body `{ "incident": "<description>" }`.
+
+---
 
 ## 🚀 Setup & Local Deployment
-Prerequisites
-Node.js (v18+)
 
-An Alibaba Cloud Account & DashScope API Key
+### Prerequisites
 
-TypeScript
+* Node.js (v18+)
+* An Alibaba Cloud account & DashScope API key
 
+### Installation
 
-Installation
 Clone the repository:
-```Bash
-git clone [https://github.com/yourusername/refactorbot-society.git](https://github.com/yourusername/refactorbot-society.git)
-cd refactorbot-society
+
+```bash
+git clone https://github.com/aleobois-arch/RefractorBot.git
+cd RefractorBot
 ```
+
 Install dependencies:
-```Bash
+
+```bash
 npm install
-Create a .env file in the root directory:
-Code snippet
+```
+
+Create a `.env` file in the root directory:
+
+```env
 QWEN_API_KEY=your_dashscope_api_key_here
 PORT=9000
-Build the TypeScript files:
 ```
-```Bash
+
+Build and start:
+
+```bash
 npm run build
-Start the local server:
 npm start
 ```
+
+Then open `http://127.0.0.1:9000` (RefactorBot) or `http://127.0.0.1:9000/nis2` (incident response).
+
+### 🧪 Offline development (mock mode)
+
+To exercise both pipelines without a DashScope key or network access (and without spending API credits), start the server with:
+
+```bash
+MOCK_QWEN=1 npm start
+```
+
+Agents then return realistic canned responses instead of calling Qwen.
+
+---
+
 ## ☁️ Alibaba Cloud Deployment Guide
+
 This project is configured specifically for Alibaba Cloud Function Compute (Custom Runtime).
 
-Run npm run build to generate the updated dist folder.
+1. Run `npm run build` to generate the updated `dist` folder.
+2. Select the following 3 items in your file explorer: `dist/`, `node_modules/`, `package.json`.
+3. Compress these 3 items directly into a `.zip` file (do not zip the parent folder — zip the items themselves).
+4. Upload the zip to your Function Compute instance.
+5. Set the Function Start Command to: `node dist/server.js`.
+6. Set `QWEN_API_KEY` as an **environment variable** in the Function Compute configuration (Configurations → Environment Variables). Do not ship your `.env` file inside the deployment zip — secrets don't belong in build artifacts.
 
-Select the following 4 items in your file explorer:
-
-dist/ (folder)
-
-node_modules/ (folder)
-
-package.json
-
-.env
-
-Compress these 4 items directly into a .zip file (Do not zip the parent folder, zip the items themselves).
-
-Upload the deploy.zip file to your Alibaba Cloud Function Compute instance.
-
-Ensure the Function Start Command is set to: node dist/server.js
+> Note: the Function Compute code directory is read-only at runtime. The orchestrator detects this and writes its optional output files under `/tmp` instead.
 
 ## ⚙️ Advanced Configuration: Tuning the Agent Society
-By default, the RefactorBot Society is configured to allow a maximum of 3 negotiation cycles between the Developer and the QA Engineer. If the QA Engineer is not satisfied by the third attempt, the loop terminates to prevent infinite API calls and runaway cloud costs.
 
-You can easily tune this limit to give the Developer agent more chances to fix highly complex legacy code.
+By default, the society allows a maximum of **3 negotiation cycles** between the Developer and the QA Engineer. If the QA Engineer is not satisfied by the third attempt, the loop terminates to prevent runaway API costs, and the response is flagged `approved: false`.
 
-1. Adjusting the Cycle Limit
-Open src/orchestrator.ts and locate the MAX_ATTEMPTS constant in the runRefactorBot function:
-```
-TypeScript
+### 1. Adjusting the cycle limit
+
+Open `src/orchestrator.ts` and locate the `MAX_ATTEMPTS` constant in `runRefactorBot`:
+
+```typescript
 // src/orchestrator.ts
 let approved = false;
 let attempts = 0;
@@ -153,30 +176,28 @@ while (!approved && attempts < MAX_ATTEMPTS) {
     // ... agent loop ...
 }
 ```
-2. Synchronizing Cloud Timeouts
-If you increase the MAX_ATTEMPTS, you must also increase your Alibaba Cloud Function Compute execution timeout. An extended AI debate will trigger a serverless timeout if not properly configured.
 
-Rule of Thumb: Allow approximately 90–100 seconds per cycle.
+### 2. Synchronizing cloud timeouts
 
-3 Cycles (Default): Set Alibaba Cloud Timeout to 300 seconds (5 minutes).
+If you increase `MAX_ATTEMPTS`, you must also increase your Function Compute execution timeout, or an extended AI debate will hit the serverless timeout.
 
-5 Cycles: Set Alibaba Cloud Timeout to 600 seconds (10 minutes).
+**Rule of thumb: ~90–100 seconds per cycle.**
 
-To update the timeout in Alibaba Cloud:
+| Cycles | Recommended Function Compute timeout |
+|--------|--------------------------------------|
+| 3 (default) | 300 seconds (5 minutes) |
+| 5 | 600 seconds (10 minutes) |
 
-Navigate to your Function Compute console.
+To update: Function Compute console → your function → **Configurations** → **Basic Settings** → **Execution Timeout Period** → save and deploy.
 
-Select your function and click Configurations.
-
-Under Basic Settings, change the Execution Timeout Period.
-
-Save and deploy the new configuration.
-
+---
 
 ## 👨‍💻 Author
+
 Jeremy Codjoe — Creator of JemBuildz
 
-## Track 3 Submission for the Agent Society Hackathon.
+Track 3 Submission for the Agent Society Hackathon.
 
 ## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

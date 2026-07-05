@@ -2,9 +2,20 @@
 import * as path from 'path';
 import { parserAgent, architectAgent, devAgent, qaAgent, reviewerAgent } from './agents';
 
-const OUTPUT_DIR = path.join(__dirname, '../output');
-if (!fs.existsSync(OUTPUT_DIR)) {
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+// On Alibaba Function Compute the code directory is read-only; only /tmp is
+// writable. Fall back to /tmp there, and never let a disk error kill the run —
+// the generated code is returned in the HTTP response either way.
+const OUTPUT_DIR = process.env.FC_FUNC_CODE_PATH
+  ? path.join('/tmp', 'refactorbot-output')
+  : path.join(__dirname, '../output');
+
+function saveOutput(fileName: string, content: string, recordLog: (a: string, b: string) => void) {
+  try {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    fs.writeFileSync(path.join(OUTPUT_DIR, fileName), content);
+  } catch (err: any) {
+    recordLog('System Warning', `Could not write ${fileName} to disk: ${err.message}`);
+  }
 }
 
 // Define a structural interface for the log entries
@@ -66,15 +77,16 @@ export async function runRefactorBot(legacyCode: string, targetFramework: string
 
   if (approved) {
     recordLog('System', 'Orchestration complete. Writing finalized assets to disk.');
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'generated_code.txt'), generatedCode);
+    saveOutput('generated_code.txt', generatedCode, recordLog);
   } else {
     recordLog('System Error', 'Max negotiation cycles reached without complete QA approval.');
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'generated_code_last.txt'), generatedCode);
+    saveOutput('generated_code_last.txt', generatedCode, recordLog);
   }
 
-  // Return both the final code AND the collected logs to the caller
+  // Return the final code, the QA verdict, and the collected logs
   return {
     generatedCode,
+    approved,
     logs
   };
 }

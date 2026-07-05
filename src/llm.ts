@@ -3,6 +3,33 @@ import { callQwen } from './qwen';
 // Canned responses used when MOCK_QWEN=1, so the pipeline can be
 // exercised end-to-end without network access or API credits.
 const MOCKS: Record<string, string> = {
+  parser: JSON.stringify({
+    functions: [{ name: 'add', params: ['a', 'b'], logic: 'returns the sum of a and b' }],
+    classes: [],
+    imports: [],
+    deprecated_patterns: ['untyped parameters', 'no input validation'],
+  }),
+  architect: JSON.stringify({
+    framework: 'FastAPI',
+    routes: [{ method: 'POST', path: '/add', handler: 'add_numbers' }],
+    models: [{ name: 'AddRequest', fields: { a: 'float', b: 'float' } }],
+    dependencies: ['fastapi', 'pydantic', 'uvicorn'],
+  }),
+  developer:
+    'from fastapi import FastAPI\n' +
+    'from pydantic import BaseModel\n\n' +
+    'app = FastAPI()\n\n' +
+    'class AddRequest(BaseModel):\n' +
+    '    a: float\n' +
+    '    b: float\n\n' +
+    '@app.post("/add")\n' +
+    'async def add_numbers(req: AddRequest) -> dict:\n' +
+    '    return {"result": req.a + req.b}\n',
+  qa: JSON.stringify({
+    approved: true,
+    feedback: 'Typed models, async handler, no resource leaks. Approved.',
+  }),
+  reviewer: 'No outstanding issues; QA already approved the implementation.',
   watcher: JSON.stringify({
     severity: 'HIGH',
     category: 'ransomware',

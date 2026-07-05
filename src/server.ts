@@ -91,10 +91,16 @@ app.get('/', (req, res) => {
               data.timeline.forEach(log => {
                 const div = document.createElement('div');
                 div.className = 'timeline-item';
-                div.innerHTML = \`
-                  <div class="agent-badge">\${log.agent}</div><span class="timestamp">[\${log.timestamp}]</span>
-                  <div style="margin-top: 0.25rem;">\${log.action}</div>
-                \`;
+                const badge = document.createElement('div');
+                badge.className = 'agent-badge';
+                badge.textContent = log.agent;
+                const ts = document.createElement('span');
+                ts.className = 'timestamp';
+                ts.textContent = '[' + log.timestamp + ']';
+                const action = document.createElement('div');
+                action.style.marginTop = '0.25rem';
+                action.textContent = log.action;
+                div.append(badge, ts, action);
                 timelineBox.appendChild(div);
               });
               finalCodeBox.textContent = data.generatedCode;
@@ -132,6 +138,7 @@ app.post(['/refactor', '/invoke'], async (req, res) => {
     res.json({
       success: true,
       message: 'RefactorBot execution complete!',
+      approved: result.approved,
       timeline: result.logs,
       generatedCode: result.generatedCode
     });

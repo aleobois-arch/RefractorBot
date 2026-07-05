@@ -9,7 +9,7 @@
     "dev": "ts-node src/server.ts"
   },
   "keywords": ["ai", "agents", "refactoring", "qwen", "alibaba"],
-  "author": "Your Name",
+  "author": "Jeremy Codjoe (JemBuildz)",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.0",
