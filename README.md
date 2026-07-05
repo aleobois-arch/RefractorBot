@@ -190,14 +190,3 @@ If you increase `MAX_ATTEMPTS`, you must also increase your Function Compute exe
 
 To update: Function Compute console → your function → **Configurations** → **Basic Settings** → **Execution Timeout Period** → save and deploy.
 
----
-
-## 👨‍💻 Author
-
-Jeremy Codjoe — Creator of JemBuildz
-
-Track 3 Submission for the Agent Society Hackathon.
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
