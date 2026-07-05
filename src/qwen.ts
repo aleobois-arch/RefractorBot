@@ -4,15 +4,14 @@ import 'dotenv/config';
 const API_KEY = process.env.QWEN_API_KEY;
 const URL = 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation';
 
-if (!API_KEY) {
-  throw new Error('Missing QWEN_API_KEY in environment variables.');
-}
-
 export async function callQwen(
   systemPrompt: string,
   userPrompt: string,
   model: string = 'qwen-plus'
 ): Promise<string> {
+  if (!API_KEY) {
+    throw new Error('Missing QWEN_API_KEY in environment variables.');
+  }
   try {
     const response = await axios.post(
       URL,
