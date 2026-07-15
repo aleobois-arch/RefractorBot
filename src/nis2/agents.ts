@@ -1,7 +1,7 @@
-import { callLLM } from '../llm';
+import { callLLM, QwenResult } from '../llm';
 
 // The Watcher — triage & severity classification
-export async function watcherAgent(incidentDescription: string): Promise<string> {
+export async function watcherAgent(incidentDescription: string): Promise<QwenResult> {
   const system =
     'You are The Watcher, a SOC triage analyst. Classify the incident. ' +
     'Return ONLY JSON: { "severity": "LOW|MEDIUM|HIGH|CRITICAL", "category": string, ' +
@@ -12,7 +12,7 @@ export async function watcherAgent(incidentDescription: string): Promise<string>
 }
 
 // The Tracker — read-only investigation
-export async function trackerAgent(incidentDescription: string, triage: string): Promise<string> {
+export async function trackerAgent(incidentDescription: string, triage: string): Promise<QwenResult> {
   const system =
     'You are The Tracker, a forensic investigator. You are STRICTLY READ-ONLY: propose no changes, only reconstruct facts. ' +
     'Return ONLY JSON: { "timeline": [{ "time": string, "event": string }], "affected_assets": [string], ' +
@@ -21,7 +21,7 @@ export async function trackerAgent(incidentDescription: string, triage: string):
 }
 
 // The Diagnostician — root-cause analysis
-export async function diagnosticianAgent(investigation: string): Promise<string> {
+export async function diagnosticianAgent(investigation: string): Promise<QwenResult> {
   const system =
     'You are The Diagnostician, a root-cause analyst. From the investigation findings, determine how and why the incident happened. ' +
     'Return ONLY JSON: { "root_cause": string, "attack_vector": string, "contributing_factors": [string], ' +
@@ -30,7 +30,7 @@ export async function diagnosticianAgent(investigation: string): Promise<string>
 }
 
 // The Engineer — remediation & risk
-export async function engineerAgent(diagnosis: string, investigation: string): Promise<string> {
+export async function engineerAgent(diagnosis: string, investigation: string): Promise<QwenResult> {
   const system =
     'You are The Engineer, an incident remediation lead. Propose containment and remediation with risk awareness. ' +
     'Return ONLY JSON: { "immediate_actions": [string], "remediation_plan": [string], "residual_risk": string }.';
@@ -43,7 +43,7 @@ export async function scribeAgent(
   investigation: string,
   diagnosis: string,
   remediation: string
-): Promise<string> {
+): Promise<QwenResult> {
   const system =
     'You are The Scribe, a compliance officer. Write a formal NIS2 (Directive (EU) 2022/2555, Article 23) incident report in Markdown ' +
     'with sections: Summary, Severity & Classification, Timeline, Root Cause, Remediation, Notification Obligations. ' +
